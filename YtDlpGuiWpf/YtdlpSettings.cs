@@ -15,4 +15,6 @@ public class YtdlpSettings
     public string RemotePassword { get; set; }
     public string RemoteLocation { get; set; }
     public string PostTransferScriptPath { get; set; }
-    }
+    public bool RunRemoteTransfer { get; set; }
+    public bool RunRemoteScript { get; set; }
+}
