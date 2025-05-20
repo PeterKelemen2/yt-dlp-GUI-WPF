@@ -243,11 +243,11 @@ public partial class MainWindow : Window
         var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(Common.ConfigPath, json);
     }
-
-    // TODO: Fix this
+    
     public async Task<bool> UploadFileAsync(string localFilePath, string remoteHost, string remoteUser,
         string remotePass, string remotePath)
     {
+        Console.WriteLine($"{localFilePath} | {remoteHost} | {remoteUser} | {remotePass} | {remotePath}");
         try
         {
             await Task.Run(() =>
@@ -260,10 +260,12 @@ public partial class MainWindow : Window
 
                 string remoteFilePath = remotePath;
 
-                // Check if remotePath looks like a directory (ends with /) - adjust if needed
-                if (remotePath.EndsWith("/") || remotePath.EndsWith("\\"))
-                    remoteFilePath = remotePath + Path.GetFileName(localFilePath);
+                if (!remotePath.EndsWith("/") && !remotePath.EndsWith("\\")) remoteFilePath = remotePath + "/";
 
+                remoteFilePath += Path.GetFileName(localFilePath);
+
+                Console.WriteLine($"Uploading to remote file path: {remoteFilePath}");
+                
                 using var fileStream = File.OpenRead(localFilePath);
                 sftp.UploadFile(fileStream, remoteFilePath);
 
