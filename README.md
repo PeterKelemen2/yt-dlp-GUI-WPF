@@ -5,7 +5,6 @@ A simple **GUI frontend for yt-dlp** built with WPF (.NET). This application all
 	<img alt="Screenshot" src="https://i.imgur.com/IbaYTiZ.png" width="450"/>
 </p>
 
----
 
 ## Features
 
@@ -16,7 +15,6 @@ A simple **GUI frontend for yt-dlp** built with WPF (.NET). This application all
 - Configure remote server credentials and transfer path
 - Simple and lightweight WPF interface
 
----
 
 ## Getting Started
 
@@ -36,7 +34,6 @@ A simple **GUI frontend for yt-dlp** built with WPF (.NET). This application all
 
 The output and progress will be shown in the text area below.
 
----
 
 ## Configuration
 
@@ -44,31 +41,23 @@ The output and progress will be shown in the text area below.
 - **Post-install Actions:** Enable to transfer files or run remote scripts after download.
 - **Remote Server:** Enter host, username, password, and remote directory for transfer.
 
----
 
 ## Building from Source
 
 Open the solution in [JetBrains Rider](https://www.jetbrains.com/rider/) or Visual Studio, restore NuGet packages, and build the project.
 
----
 
 ## License
 
 This project is open source under the [MIT License](LICENSE).
 
----
 
 ## Contributions & Issues
 
 Feel free to open issues or submit pull requests to improve the application.
 
----
 
 ## Acknowledgments
 
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp) for the powerful downloader backend
 - WPF for the UI framework
-
----
-
-*Enjoy easy video downloading with YtDlpGuiWpf!*
