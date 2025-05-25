@@ -27,8 +27,8 @@ public class YtdlpSettings : INotifyPropertyChanged
         get => _localSavePath;
         set { _localSavePath = value; OnPropertyChanged(); }
     }
-    
-    private string _ytDlpArguments = string.Empty;
+
+    private string _ytDlpArguments = "-x --audio-format mp3 --embed-thumbnail --add-metadata -o \"%(track, title, id)s.%(ext)s\"";
     public string YtDlpArguments
     {
         get => _ytDlpArguments;

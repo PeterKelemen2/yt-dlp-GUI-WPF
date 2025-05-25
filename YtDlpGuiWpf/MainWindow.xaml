@@ -6,8 +6,10 @@
         xmlns:local="clr-namespace:YtDlpGuiWpf"
         mc:Ignorable="d"
         Title="yt-dlp GUI"
-        Icon="Assets/ytdlpgui-icon.png"
-        SizeToContent="WidthAndHeight"
+        Icon="pack://application:,,,/Assets/ytdlpgui-icon.ico"
+        MinWidth="450"
+        Width="450"
+        SizeToContent="Height"
         Loaded="MainWindow_Loaded"
         Closing="MainWindow_Closing"
         Background="{StaticResource BgColor}"
@@ -81,7 +83,7 @@
             </Expander>
 
             <!-- Buttons -->
-            <Button Content="Download" Margin="0,20,0,0" Height="35" Click="DownloadButton_Click" />
+            <Button Content="Download" Margin="0,20,0,0" Width="400" Height="35" Click="DownloadButton_Click" />
 
             <TextBox x:Name="OutputTextBox"
                      Margin="10"
@@ -90,7 +92,6 @@
                      IsReadOnly="True"
                      TextWrapping="Wrap"
                      AcceptsReturn="True"
-                     Width="400"
                      Height="200" />
 
         </StackPanel>
