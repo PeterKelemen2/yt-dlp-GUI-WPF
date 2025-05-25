@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:YtDlpGuiWpf"
         mc:Ignorable="d"
         Title="yt-dlp GUI"
+        Icon="Assets/ytdlpgui-icon.png"
         SizeToContent="WidthAndHeight"
         Loaded="MainWindow_Loaded"
         Closing="MainWindow_Closing"
