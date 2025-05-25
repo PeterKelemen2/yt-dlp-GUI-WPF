@@ -8,56 +8,64 @@
         Title="yt-dlp GUI"
         SizeToContent="WidthAndHeight"
         Loaded="MainWindow_Loaded"
-        Closing="MainWindow_Closing">
+        Closing="MainWindow_Closing"
+        Background="{StaticResource BgColor}"
+        Foreground="{StaticResource FontColor}">
+    
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="10" Orientation="Vertical" VerticalAlignment="Top">
 
             <!-- URL Input -->
-            <TextBlock Text="Video URL:" Margin="0,5,0,2" />
-            <DockPanel>
-                <TextBox x:Name="UrlTextBox" Width="330" Margin="0,0,5,0" />
-                <Button Content="Paste" Width="75" Click="PasteUrl_Click" />
+            <TextBlock Text="Video URL:" Margin="0,0,0,2" />
+            <DockPanel LastChildFill="True">
+                <Button Content="Paste" Width="75" DockPanel.Dock="Right" Click="PasteUrl_Click" />
+                <TextBox x:Name="UrlTextBox" Margin="0,0,5,0" />
             </DockPanel>
 
             <!-- Local Save Path -->
             <TextBlock Text="Local Save Path:" Margin="0,10,0,2" />
-            <DockPanel>
-                <TextBox x:Name="LocalPathTextBox" Width="330" Margin="0,0,5,0"
+            <DockPanel LastChildFill="True">
+                <Button Content="Browse" Width="75" DockPanel.Dock="Right" Click="BrowseLocalPath_Click" />
+                <TextBox x:Name="LocalPathTextBox" Margin="0,0,5,0"
                          Text="{Binding LocalSavePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <Button Content="Browse" Width="75" Click="BrowseLocalPath_Click" />
             </DockPanel>
 
             <!-- yt-dlp Install Location -->
             <TextBlock Text="yt-dlp Install Path:" Margin="0,10,0,2" />
-            <DockPanel>
-                <TextBox x:Name="YtDlpPathTextBox" Width="330" Margin="0,0,5,0"
+            <DockPanel LastChildFill="True">
+                <Button Content="Browse" Width="75" DockPanel.Dock="Right" Click="BrowseYTDLPPath_Click" />
+                <TextBox x:Name="YtDlpPathTextBox" Margin="0,0,5,0"
                          Text="{Binding YtDlpPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <Button Content="Browse" Width="75" Click="BrowseYTDLPPath_Click" />
             </DockPanel>
 
             <!-- yt-dlp Arguments -->
             <TextBlock Text="yt-dlp Arguments:" Margin="0,10,0,2" />
-            <TextBox x:Name="YtDlpArgsTextBox" Width="430" Height="80" TextWrapping="Wrap" AcceptsReturn="True"
+            <TextBox x:Name="YtDlpArgsTextBox"  Height="80" TextWrapping="Wrap" AcceptsReturn="True"
+                     VerticalContentAlignment="Top"
+                     Padding="2,2"
                      Text="{Binding YtDlpArguments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
             <!-- Post Install Checkbox -->
-            <CheckBox x:Name="EnablePostInstallCheckBox" Content="Enable Post-Install Actions" Margin="0,10,0,0"
+            <CheckBox x:Name="EnablePostInstallCheckBox" Content="Enable Post-Install Actions" Margin="0,20,0,0"
+                      Foreground="{StaticResource FontColor}"
                       IsChecked="{Binding EnablePostInstall, Mode=TwoWay}" />
 
             <CheckBox x:Name="RemoteTransferCheckBox" Content="Transfer to Remote after download" Margin="15,10,0,0"
+                      Foreground="{StaticResource FontColor}"
                       IsEnabled="{Binding IsChecked, ElementName=EnablePostInstallCheckBox}"
                       IsChecked="{Binding RunRemoteTransfer, Mode=TwoWay}" />
 
             <CheckBox x:Name="RemoteScriptRunning" Content="Run Remote script after download" Margin="15,10,0,0"
+                      Foreground="{StaticResource FontColor}"
                       IsEnabled="{Binding IsChecked, ElementName=EnablePostInstallCheckBox}"
                       IsChecked="{Binding RunRemoteScript, Mode=TwoWay}" />
 
             <!-- Remote Server Configuration -->
-            <Expander Margin="0,20,0,5" IsExpanded="False">
+            <Expander Margin="0,20,0,5" IsExpanded="False" Foreground="{StaticResource FontColor}">
                 <Expander.Header>
                     <TextBlock Text="Remote Server Configuration" FontWeight="Bold" />
                 </Expander.Header>
-                <StackPanel>
+                <StackPanel Margin="0,5,0,0">
                     <TextBlock Text="Host:" />
                     <TextBox Text="{Binding RemoteHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <TextBlock Text="Username:" />

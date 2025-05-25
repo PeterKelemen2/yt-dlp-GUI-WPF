@@ -4,6 +4,93 @@
              xmlns:local="clr-namespace:YtDlpGuiWpf"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <SolidColorBrush x:Key="PrimaryColor" Color="#4E5579" />
+        <SolidColorBrush x:Key="ButtonColor" Color="#8B409D" />
+        <SolidColorBrush x:Key="BgColor" Color="#292D3E" />
+        <SolidColorBrush x:Key="FontColor" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="TextBoxBgColor" Color="#202331" />
+        <DropShadowEffect x:Key="DropShadow" Color="Black" BlurRadius="6" ShadowDepth="4" Opacity="0.0" />
+
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource ButtonColor}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{StaticResource ButtonColor}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5"
+                            SnapsToDevicePixels="True"
+                            Effect="{StaticResource DropShadow}">
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="2,0" />
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Foreground" Value="{StaticResource FontColor}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border
+                            Background="{StaticResource TextBoxBgColor}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5"
+                            SnapsToDevicePixels="True"
+                            Effect="{StaticResource DropShadow}">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="PasswordBox">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="2,0" />
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Foreground" Value="{StaticResource FontColor}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border
+                            Background="{StaticResource TextBoxBgColor}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5"
+                            SnapsToDevicePixels="True"
+                            Effect="{StaticResource DropShadow}">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>
