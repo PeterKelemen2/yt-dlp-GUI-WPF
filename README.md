@@ -21,7 +21,7 @@ A simple **GUI frontend for yt-dlp** built with WPF (.NET). This application all
 ### Prerequisites
 
 - Windows 10 or later
-- [.NET 6+ runtime](https://dotnet.microsoft.com/download)
+- [.NET 9.0 runtime](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
 - [yt-dlp executable](https://github.com/yt-dlp/yt-dlp/releases) (You can specify the path inside the app)
 
 ### Usage
