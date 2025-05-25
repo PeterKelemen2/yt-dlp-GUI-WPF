@@ -5,7 +5,10 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <SolidColorBrush x:Key="PrimaryColor" Color="#4E5579" />
+        <SolidColorBrush x:Key="PrimaryColorHover" Color="#5F6894" />
         <SolidColorBrush x:Key="ButtonColor" Color="#8B409D" />
+        <SolidColorBrush x:Key="ButtonColorHover" Color="#A94EBF" />
+        <SolidColorBrush x:Key="ButtonColorPressed" Color="#713480" />
         <SolidColorBrush x:Key="BgColor" Color="#292D3E" />
         <SolidColorBrush x:Key="FontColor" Color="#FFFFFF" />
         <SolidColorBrush x:Key="TextBoxBgColor" Color="#202331" />
@@ -23,6 +26,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border
+                            x:Name="border"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{StaticResource ButtonColor}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -34,6 +38,18 @@
                                 VerticalAlignment="Center"
                                 RecognizesAccessKey="True" />
                         </Border>
+                        
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource ButtonColorHover}" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ButtonColorHover}" />
+                            </Trigger>
+                            
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource ButtonColorPressed}" />
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ButtonColorPressed}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -43,7 +59,7 @@
             <Setter Property="Margin" Value="0" />
             <Setter Property="Padding" Value="2,0" />
             <Setter Property="BorderBrush" Value="{StaticResource PrimaryColor}" />
-            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderThickness" Value="2" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="Height" Value="30" />
             <Setter Property="Foreground" Value="{StaticResource FontColor}" />
@@ -52,6 +68,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
                         <Border
+                            x:Name="border"
                             Background="{StaticResource TextBoxBgColor}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -62,6 +79,14 @@
                                           Margin="{TemplateBinding Padding}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ButtonColor}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PrimaryColorHover}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -130,6 +155,9 @@
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.5" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryColorHover}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
