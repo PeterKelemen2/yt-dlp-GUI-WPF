@@ -64,7 +64,7 @@
                       IsChecked="{Binding RunRemoteScript, Mode=TwoWay}" />
 
             <!-- Remote Server Configuration -->
-            <Expander Margin="0,20,0,5" IsExpanded="True" Foreground="{StaticResource FontColor}">
+            <Expander Margin="0,20,0,5" IsExpanded="False" Foreground="{StaticResource FontColor}">
                 <Expander.Header>
                     <TextBlock Text="Remote Server Configuration" FontWeight="Bold" />
                 </Expander.Header>
