@@ -16,6 +16,7 @@ public partial class MainWindow : Window
 {
     private YtdlpSettings _settings = new();
     public List<string> AvailableOSList { get; } = new() { "Linux", "Windows" };
+    bool isDownloading = false;
 
     public MainWindow()
     {
@@ -60,6 +61,8 @@ public partial class MainWindow : Window
 
         try
         {
+            isDownloading = true;
+            DownloadBtn.IsEnabled = false;
             // Clear output box
             OutputTextBox.Clear();
 
@@ -104,10 +107,15 @@ public partial class MainWindow : Window
                     AppendOutput(success ? "Script succeeded." : "Something failed.");
                 }
             }
+            
+            isDownloading = false;
+            DownloadBtn.IsEnabled = true;
         }
         catch (Exception ex)
         {
             MessageBox.Show($"Error: {ex.Message}");
+            isDownloading = false;
+            DownloadBtn.IsEnabled = true;
         }
     }
 

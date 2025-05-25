@@ -110,7 +110,7 @@
             </Expander>
 
             <!-- Buttons -->
-            <Button Content="Download" Margin="0,20,0,0" Width="380" Height="35" Click="DownloadButton_Click" />
+            <Button x:Name="DownloadBtn" Content="Download" Margin="0,20,0,0" Width="380" Height="35" Click="DownloadButton_Click" />
 
             <TextBox x:Name="OutputTextBox"
                      Margin="10"

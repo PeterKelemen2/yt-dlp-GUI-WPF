@@ -240,6 +240,10 @@
                                 <Setter TargetName="border" Property="BorderBrush"
                                         Value="{StaticResource ButtonColorPressed}" />
                             </Trigger>
+                            
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5" />
+                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
