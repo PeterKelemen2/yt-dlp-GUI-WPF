@@ -23,9 +23,12 @@ namespace YtDlpGuiWpf;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private YtdlpSettings _settings = new();
+
     public MainWindow()
     {
         InitializeComponent();
+        DataContext = _settings;
     }
 
     private void PasteUrl_Click(object sender, RoutedEventArgs e)
@@ -36,14 +39,15 @@ public partial class MainWindow : Window
     private async void DownloadButton_Click(object sender, RoutedEventArgs e)
     {
         string url = UrlTextBox.Text;
-        string savePath = LocalPathTextBox.Text;
-        string ytDlpPath = YtDlpPathTextBox.Text;
-        string ytDlpArgs = YtDlpArgsTextBox.Text;
-        bool postInstall = EnablePostInstallCheckBox.IsChecked == true;
-        bool remoteTransfer = RemoteTransferCheckBox.IsChecked == true;
-        string remoteUser = RemoteUsernameTextBox.Text;
+        string savePath = _settings.LocalSavePath;
+        string ytDlpPath = _settings.YtDlpPath;
+        string ytDlpArgs = _settings.YtDlpArguments;
+        bool postInstall = _settings.EnablePostInstall;
+        bool remoteTransfer = _settings.RunRemoteTransfer;
+        string remoteHost = _settings.RemoteHost;
+        string remoteUser = _settings.RemoteUsername;
         string remotePass = RemotePasswordBox.Password;
-        string remoteLoc = RemoteLocationTextBox.Text;
+        string remoteLoc = _settings.RemoteLocation;
 
         if (string.IsNullOrWhiteSpace(url) || string.IsNullOrWhiteSpace(savePath) ||
             string.IsNullOrWhiteSpace(ytDlpPath))
@@ -169,15 +173,8 @@ public partial class MainWindow : Window
 
     private void BrowseLocalPath_Click(object sender, RoutedEventArgs e)
     {
-        var dialog = new CommonOpenFileDialog
-        {
-            IsFolderPicker = true
-        };
-
-        if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-        {
-            LocalPathTextBox.Text = dialog.FileName;
-        }
+        var dialog = new CommonOpenFileDialog { IsFolderPicker = true };
+        if (dialog.ShowDialog() == CommonFileDialogResult.Ok) LocalPathTextBox.Text = dialog.FileName;
     }
 
     private void BrowseYTDLPPath_Click(object sender, RoutedEventArgs e)
@@ -188,62 +185,10 @@ public partial class MainWindow : Window
             Title = "Select yt-dlp Executable"
         };
 
-        if (dialog.ShowDialog() == true)
-        {
-            YtDlpPathTextBox.Text = dialog.FileName;
-        }
+        if (dialog.ShowDialog() == true) YtDlpPathTextBox.Text = dialog.FileName;
     }
 
-    private void LoadSettings()
-    {
-        if (File.Exists(Common.ConfigPath))
-        {
-            try
-            {
-                var json = File.ReadAllText(Common.ConfigPath);
-                var settings = JsonSerializer.Deserialize<YtdlpSettings>(json);
-                if (settings != null)
-                {
-                    YtDlpPathTextBox.Text = settings.YtDlpPath;
-                    LocalPathTextBox.Text = settings.LocalSavePath;
-                    YtDlpArgsTextBox.Text = settings.YtDlpArguments;
-                    EnablePostInstallCheckBox.IsChecked = settings.EnablePostInstall;
-                    RemoteTransferCheckBox.IsChecked = settings.RunRemoteTransfer;
-                    RemoteScriptRunning.IsChecked = settings.RunRemoteScript;
-                    RemoteUsernameTextBox.Text = settings.RemoteUsername;
-                    RemotePasswordBox.Password = settings.RemotePassword;
-                    RemoteLocationTextBox.Text = settings.RemoteLocation;
-                    PostTransferScriptPathTextBox.Text = settings.PostTransferScriptPath;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to load settings. Using defaults.\n\n" + ex.Message, "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-        }
-    }
 
-    private void SaveSettings()
-    {
-        var settings = new YtdlpSettings
-        {
-            YtDlpPath = YtDlpPathTextBox.Text,
-            LocalSavePath = LocalPathTextBox.Text,
-            YtDlpArguments = YtDlpArgsTextBox.Text,
-            EnablePostInstall = EnablePostInstallCheckBox.IsChecked ?? false,
-            RunRemoteTransfer = RemoteTransferCheckBox.IsChecked ?? false,
-            RunRemoteScript = RemoteScriptRunning.IsChecked ?? false,
-            RemoteUsername = RemoteUsernameTextBox.Text,
-            RemotePassword = RemotePasswordBox.Password,
-            RemoteLocation = RemoteLocationTextBox.Text,
-            PostTransferScriptPath = PostTransferScriptPathTextBox.Text
-        };
-
-        var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(Common.ConfigPath, json);
-    }
-    
     public async Task<bool> UploadFileAsync(string localFilePath, string remoteHost, string remoteUser,
         string remotePass, string remotePath)
     {
@@ -265,7 +210,7 @@ public partial class MainWindow : Window
                 remoteFilePath += Path.GetFileName(localFilePath);
 
                 Console.WriteLine($"Uploading to remote file path: {remoteFilePath}");
-                
+
                 using var fileStream = File.OpenRead(localFilePath);
                 sftp.UploadFile(fileStream, remoteFilePath);
 
@@ -276,7 +221,8 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Upload failed: {ex.Message}", "SFTP Upload Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Upload failed: {ex.Message}", "SFTP Upload Error", MessageBoxButton.OK,
+                MessageBoxImage.Error);
             return false; // failed
         }
     }
@@ -284,11 +230,34 @@ public partial class MainWindow : Window
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        LoadSettings();
+        if (File.Exists(YtdlpSettings.ConfigPath))
+        {
+            try
+            {
+                var json = File.ReadAllText(YtdlpSettings.ConfigPath);
+                var loaded = JsonSerializer.Deserialize<YtdlpSettings>(json);
+                if (loaded != null)
+                    _settings = loaded;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading settings: {ex.Message}");
+            }
+        }
+
+        DataContext = _settings;
+        RemotePasswordBox.Password = _settings.RemotePassword;
     }
 
     private void MainWindow_Closing(object sender, CancelEventArgs e)
     {
-        SaveSettings();
+        _settings.RemotePassword = RemotePasswordBox.Password;
+        var json = JsonSerializer.Serialize(_settings, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(YtdlpSettings.ConfigPath, json);
+    }
+
+    private void RemotePasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+    {
+        _settings.RemotePassword = RemotePasswordBox.Password;
     }
 }
