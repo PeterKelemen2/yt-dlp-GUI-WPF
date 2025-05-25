@@ -15,6 +15,7 @@ namespace YtDlpGuiWpf;
 public partial class MainWindow : Window
 {
     private YtdlpSettings _settings = new();
+    public List<string> AvailableOSList { get; } = new() { "Linux", "Windows" };
 
     public MainWindow()
     {
@@ -94,7 +95,44 @@ public partial class MainWindow : Window
         }
     }
 
-// Helper method to run a process asynchronously and capture output
+    private async Task<bool> RunRemoteExecutableAsync(string host, string username, string password, string exePath, bool isWindows)
+    {
+        try
+        {
+            using var ssh = new SshClient(host, username, password);
+            ssh.Connect();
+
+            string command;
+            if (isWindows)
+            {
+                // Wrap path in quotes, run with cmd /c for safety
+                command = $"cmd /c \"\"{exePath}\"\"";
+            }
+            else
+            {
+                // Linux, run directly
+                command = exePath;
+            }
+
+            var result = ssh.RunCommand(command);
+            ssh.Disconnect();
+
+            AppendOutput($"Remote executable output: {result.Result}");
+            if (!string.IsNullOrEmpty(result.Error))
+                AppendOutput($"Remote executable error: {result.Error}");
+
+            return string.IsNullOrEmpty(result.Error);
+        }
+        catch (Exception ex)
+        {
+            AppendOutput($"Exception while running remote exe: {ex.Message}");
+            return false;
+        }
+    }
+
+
+    
+    // Helper method to run a process asynchronously and capture output
     private async Task RunProcessAsync(string exePath, string arguments)
     {
         var psi = new ProcessStartInfo

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows;
 
 namespace YtDlpGuiWpf;
@@ -13,6 +14,9 @@ public class YtdlpSettings : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
     private void OnPropertyChanged([CallerMemberName] string? name = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+    [JsonIgnore]
+    public List<string> AvailableOSList { get; } = new() { "Linux", "Windows" };
     
     private string _ytDlpPath = string.Empty;
     public string YtDlpPath
@@ -68,6 +72,13 @@ public class YtdlpSettings : INotifyPropertyChanged
     {
         get => _remoteLocation;
         set { _remoteLocation = value; OnPropertyChanged(); }
+    }
+    
+    private string _selectedRemoteOS = "Linux"; // default
+    public string SelectedRemoteOS
+    {
+        get => _selectedRemoteOS;
+        set { _selectedRemoteOS = value; OnPropertyChanged(nameof(SelectedRemoteOS)); }
     }
 
     private string _postTransferScriptPath = string.Empty;

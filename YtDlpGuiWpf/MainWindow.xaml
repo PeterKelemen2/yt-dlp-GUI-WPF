@@ -64,7 +64,7 @@
                       IsChecked="{Binding RunRemoteScript, Mode=TwoWay}" />
 
             <!-- Remote Server Configuration -->
-            <Expander Margin="0,20,0,5" IsExpanded="False" Foreground="{StaticResource FontColor}">
+            <Expander Margin="0,20,0,5" IsExpanded="True" Foreground="{StaticResource FontColor}">
                 <Expander.Header>
                     <TextBlock Text="Remote Server Configuration" FontWeight="Bold" />
                 </Expander.Header>
@@ -95,14 +95,19 @@
                     <PasswordBox Grid.Row="5" Grid.Column="0" x:Name="RemotePasswordBox" PasswordChanged="RemotePasswordBox_PasswordChanged" />
 
                     <!-- Column 2 -->
-                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Remote Location:" Margin="10,0,0,2"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Remote Location:" Margin="0,0,0,2"/>
                     <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding RemoteLocation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="Post-Transfer Script Path:" Margin="10,8,0,2"/>
+                    <TextBlock Grid.Row="2" Grid.Column="2" Text="Post-Transfer Script Path:" Margin="0,8,0,2"/>
                     <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding PostTransferScriptPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    
+                    <TextBlock Grid.Row="4" Grid.Column="2" Text="Remote OS:" Margin="0,8,0,2"/>
+                    <ComboBox Grid.Row="5" Grid.Column="2"
+                              ItemsSource="{Binding AvailableOSList}"
+                              SelectedItem="{Binding SelectedRemoteOS, Mode=TwoWay}"
+                              Margin="0,0,0,0" />
                 </Grid>
             </Expander>
-
 
             <!-- Buttons -->
             <Button Content="Download" Margin="0,20,0,0" Width="380" Height="35" Click="DownloadButton_Click" />
