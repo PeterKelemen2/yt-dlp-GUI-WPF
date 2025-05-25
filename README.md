@@ -2,7 +2,7 @@
 
 A simple **GUI frontend for yt-dlp** built with WPF (.NET). This application allows you to easily download videos from YouTube and other supported sites using yt-dlp, with customizable arguments and remote transfer options.
 <p align="center">
-	<img alt="Screenshot" src="https://i.imgur.com/IbaYTiZ.png" width="450"/>
+	<img alt="Screenshot" src="https://i.imgur.com/fNF9S3V.png" width="450"/>
 </p>
 
 
