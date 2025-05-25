@@ -36,6 +36,8 @@ public partial class MainWindow : Window
         string ytDlpArgs = _settings.YtDlpArguments;
         bool postInstall = _settings.EnablePostInstall;
         bool remoteTransfer = _settings.RunRemoteTransfer;
+        bool remoteScript = _settings.RunRemoteScript;
+        string remoteScriptPath = _settings.PostTransferScriptPath;
         string remoteHost = _settings.RemoteHost;
         string remoteUser = _settings.RemoteUsername;
         string remotePass = RemotePasswordBox.Password;
@@ -81,12 +83,26 @@ public partial class MainWindow : Window
             AppendOutput("Download complete.");
 
             // 3) Optionally upload file
-            if (postInstall && remoteTransfer)
+            if (postInstall)
             {
-                AppendOutput("Uploading to remote...");
-                bool success =
-                    await UploadFileAsync(fullFilePath, "petiserver.home", remoteUser, remotePass, remoteLoc);
-                AppendOutput(success ? "Upload succeeded." : "Upload failed.");
+                if (remoteTransfer)
+                {
+                    AppendOutput("Uploading to remote...");
+                    bool success =
+                        await UploadFileAsync(fullFilePath, remoteHost, remoteUser, remotePass, remoteLoc);
+                    AppendOutput(success ? "Upload succeeded." : "Upload failed.");
+                }
+
+                if (remoteScript)
+                {
+                    AppendOutput("Running remote script...");
+                    string selectedOS = SelectedOS.SelectedItem as string ?? string.Empty;
+                    bool isWindows = string.Equals(selectedOS, "Windows", StringComparison.OrdinalIgnoreCase);
+
+                    bool success = await RunRemoteExecutableAsync(remoteHost, remoteUser, remotePass, remoteScriptPath,
+                        isWindows);
+                    AppendOutput(success ? "Script succeeded." : "Something failed.");
+                }
             }
         }
         catch (Exception ex)
@@ -95,7 +111,8 @@ public partial class MainWindow : Window
         }
     }
 
-    private async Task<bool> RunRemoteExecutableAsync(string host, string username, string password, string exePath, bool isWindows)
+    private async Task<bool> RunRemoteExecutableAsync(string host, string username, string password, string exePath,
+        bool isWindows)
     {
         try
         {
@@ -105,13 +122,16 @@ public partial class MainWindow : Window
             string command;
             if (isWindows)
             {
+                AppendOutput("Windows machine found!");
                 // Wrap path in quotes, run with cmd /c for safety
                 command = $"cmd /c \"\"{exePath}\"\"";
             }
             else
             {
+                AppendOutput("Linux machine found!");
                 // Linux, run directly
-                command = exePath;
+                command = $"bash \"{exePath}\"";
+                Console.WriteLine($"Command: {command}");
             }
 
             var result = ssh.RunCommand(command);
@@ -131,7 +151,6 @@ public partial class MainWindow : Window
     }
 
 
-    
     // Helper method to run a process asynchronously and capture output
     private async Task RunProcessAsync(string exePath, string arguments)
     {
