@@ -35,6 +35,7 @@ public partial class MainWindow : Window
         string savePath = _settings.LocalSavePath;
         string ytDlpPath = _settings.YtDlpPath;
         string ytDlpArgs = _settings.YtDlpArguments;
+        string ytDlpNaming = _settings.YtDlpNamingScheme;
         bool postInstall = _settings.EnablePostInstall;
         bool remoteTransfer = _settings.RunRemoteTransfer;
         bool remoteScript = _settings.RunRemoteScript;
@@ -51,38 +52,18 @@ public partial class MainWindow : Window
             return;
         }
 
-        // Extract output template from ytDlpArgs or use default
-        string outputTemplate = "%(track, title, id)s.mp3";
-        var match = System.Text.RegularExpressions.Regex.Match(ytDlpArgs, @"-o\s+""([^""]+)""");
-        if (match.Success)
-        {
-            outputTemplate = match.Groups[1].Value;
-        }
-
         try
         {
             isDownloading = true;
             DownloadBtn.IsEnabled = false;
             // Clear output box
             OutputTextBox.Clear();
-
-            // 1) Get expected filename
-            string filename = await GetYtDlpFilenameAsync(ytDlpPath, url, outputTemplate);
-            filename = Path.ChangeExtension(filename, ".mp3");
-            if (string.IsNullOrWhiteSpace(filename))
-            {
-                MessageBox.Show("Could not determine output filename.");
-                return;
-            }
-
-            string fullFilePath = Path.Combine(savePath, filename);
-
-            AppendOutput($"Filename resolved: {filename}");
-
+            
             // 2) Run actual download
-            var downloadArgs = $"{ytDlpArgs} -o \"{Path.Combine(savePath, filename)}\" \"{url}\"";
-            await RunProcessAsync(ytDlpPath, downloadArgs);
+            var downloadArgs = $"{ytDlpArgs} --print after_move:filepath -o \"{Path.Combine(savePath, ytDlpNaming)}\" \"{url}\"";
+            string fullFilePath = await RunProcessAsync(ytDlpPath, downloadArgs);
 
+            Console.WriteLine("FullFilePath: " +  fullFilePath);
             AppendOutput("Download complete.");
 
             // 3) Optionally upload file
@@ -118,7 +99,7 @@ public partial class MainWindow : Window
             DownloadBtn.IsEnabled = true;
         }
     }
-
+    
     private async Task<bool> RunRemoteExecutableAsync(string host, string username, string password, string exePath,
         bool isWindows)
     {
@@ -159,8 +140,8 @@ public partial class MainWindow : Window
     }
 
 
-    // Helper method to run a process asynchronously and capture output
-    private async Task RunProcessAsync(string exePath, string arguments)
+    // Helper method to run a process asynchronously and capture output, also return the output file name
+    private async Task<string> RunProcessAsync(string exePath, string arguments)
     {
         var psi = new ProcessStartInfo
         {
@@ -173,12 +154,18 @@ public partial class MainWindow : Window
             StandardOutputEncoding = Encoding.UTF8,
             StandardErrorEncoding = Encoding.UTF8
         };
-
+    
+        var outputBuilder = new StringBuilder();
+        
         using var process = new Process { StartInfo = psi };
 
         process.OutputDataReceived += (s, e) =>
         {
-            if (e.Data != null) AppendOutput(e.Data);
+            if (e.Data != null)
+            {
+                AppendOutput(e.Data);          // show live output in UI
+                outputBuilder.AppendLine(e.Data); // collect output for returning
+            }
         };
         process.ErrorDataReceived += (s, e) =>
         {
@@ -191,6 +178,8 @@ public partial class MainWindow : Window
         process.BeginErrorReadLine();
 
         await process.WaitForExitAsync();
+        
+        return outputBuilder.ToString().Trim();
     }
 
     // Helper method to append text to OutputTextBox on UI thread
@@ -202,31 +191,7 @@ public partial class MainWindow : Window
             OutputTextBox.ScrollToEnd();
         });
     }
-
-    // Method to get filename from yt-dlp
-    private async Task<string> GetYtDlpFilenameAsync(string ytDlpPath, string url, string outputTemplate)
-    {
-        var startInfo = new ProcessStartInfo
-        {
-            FileName = ytDlpPath,
-            Arguments = $"--get-filename -o \"{outputTemplate}\" \"{url}\"",
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-            StandardOutputEncoding = Encoding.UTF8,
-        };
-
-        using var process = new Process { StartInfo = startInfo };
-
-        process.Start();
-
-        string filename = await process.StandardOutput.ReadLineAsync();
-
-        await process.WaitForExitAsync();
-
-        return filename;
-    }
-
+    
     private void BrowseLocalPath_Click(object sender, RoutedEventArgs e)
     {
         var dialog = new CommonOpenFileDialog { IsFolderPicker = true };
@@ -299,11 +264,11 @@ public partial class MainWindow : Window
         var useDarkMode = true;
         DwmSetWindowAttribute(hwnd, attribute, ref useDarkMode, Marshal.SizeOf(typeof(bool)));
 
-        if (File.Exists(YtdlpSettings.ConfigPath))
+        if (File.Exists(Common.ConfigPath))
         {
             try
             {
-                var json = File.ReadAllText(YtdlpSettings.ConfigPath);
+                var json = File.ReadAllText(Common.ConfigPath);
                 var loaded = JsonSerializer.Deserialize<YtdlpSettings>(json);
                 if (loaded != null)
                     _settings = loaded;
@@ -322,7 +287,7 @@ public partial class MainWindow : Window
     {
         _settings.RemotePassword = RemotePasswordBox.Password;
         var json = JsonSerializer.Serialize(_settings, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(YtdlpSettings.ConfigPath, json);
+        File.WriteAllText(Common.ConfigPath, json);
     }
 
     private void RemotePasswordBox_PasswordChanged(object sender, RoutedEventArgs e)

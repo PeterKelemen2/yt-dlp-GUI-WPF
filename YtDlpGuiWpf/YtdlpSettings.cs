@@ -9,8 +9,6 @@ namespace YtDlpGuiWpf;
 
 public class YtdlpSettings : INotifyPropertyChanged
 {
-    public const string ConfigPath = "config.json";
-    
     public event PropertyChangedEventHandler? PropertyChanged;
     private void OnPropertyChanged([CallerMemberName] string? name = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -32,11 +30,19 @@ public class YtdlpSettings : INotifyPropertyChanged
         set { _localSavePath = value; OnPropertyChanged(); }
     }
 
-    private string _ytDlpArguments = "-x --audio-format mp3 --embed-thumbnail --add-metadata -o \"%(track, title, id)s.%(ext)s\"";
+    private string _ytDlpArguments = "-x --audio-format mp3 --embed-thumbnail --add-metadata";
     public string YtDlpArguments
     {
         get => _ytDlpArguments;
         set { _ytDlpArguments = value; OnPropertyChanged(); }
+    }
+
+    private string _ytDlpNamingScheme = "%(track, title, id)s.%(ext)s";
+
+    public string YtDlpNamingScheme
+    {
+        get => _ytDlpNamingScheme;
+        set { _ytDlpNamingScheme = value; OnPropertyChanged(); }
     }
     
     private bool _enablePostInstall;
@@ -100,5 +106,12 @@ public class YtdlpSettings : INotifyPropertyChanged
     {
         get => _runRemoteScript;
         set { _runRemoteScript = value; OnPropertyChanged(); }
+    }
+    
+    private bool _remoteBlockOpen = false;
+    public bool RemoteBlockOpen
+    {
+        get => _remoteBlockOpen;
+        set { _remoteBlockOpen = value; OnPropertyChanged(); }
     }
 }
