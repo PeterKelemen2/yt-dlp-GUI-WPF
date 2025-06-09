@@ -60,9 +60,13 @@ public partial class MainWindow : Window
             OutputTextBox.Clear();
             
             // 2) Run actual download
-            var downloadArgs = $"{ytDlpArgs} --print after_move:filepath -o \"{Path.Combine(savePath, ytDlpNaming)}\" \"{url}\"";
-            string fullFilePath = await RunProcessAsync(ytDlpPath, downloadArgs);
+            var downloadArgs = $"{ytDlpArgs} --print after_move:filepath --verbose -o \"{Path.Combine(savePath, ytDlpNaming)}\" \"{url}\"";
+            string stdout = await RunProcessAsync(ytDlpPath, downloadArgs);
 
+            string fullFilePath = stdout
+                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .LastOrDefault() ?? "";
+            
             Console.WriteLine("FullFilePath: " +  fullFilePath);
             AppendOutput("Download complete.");
 
@@ -154,33 +158,41 @@ public partial class MainWindow : Window
             StandardOutputEncoding = Encoding.UTF8,
             StandardErrorEncoding = Encoding.UTF8
         };
-    
-        var outputBuilder = new StringBuilder();
-        
+
+        var stdoutBuilder = new StringBuilder();
+
         using var process = new Process { StartInfo = psi };
 
         process.OutputDataReceived += (s, e) =>
         {
             if (e.Data != null)
             {
-                AppendOutput(e.Data);          // show live output in UI
-                outputBuilder.AppendLine(e.Data); // collect output for returning
+                AppendOutput($"Output file: {e.Data}");
+                Console.WriteLine(e.Data);
+                stdoutBuilder.AppendLine(e.Data);  // Collect stdout (file path lines)
             }
         };
+
         process.ErrorDataReceived += (s, e) =>
         {
-            if (e.Data != null) AppendOutput($"ERR: {e.Data}");
+            if (e.Data != null)
+            {
+                Console.WriteLine(e.Data);
+                if(!string.IsNullOrWhiteSpace(e.Data.Trim())) AppendOutput($"[yt-dlp] {e.Data}");
+            }
         };
 
+        AppendOutput("Starting process...");
         process.Start();
-
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
 
         await process.WaitForExitAsync();
-        
-        return outputBuilder.ToString().Trim();
+
+        // Return trimmed stdout (the file path lines)
+        return stdoutBuilder.ToString().Trim();
     }
+
 
     // Helper method to append text to OutputTextBox on UI thread
     private void AppendOutput(string text)
