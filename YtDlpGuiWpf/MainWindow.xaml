@@ -17,65 +17,72 @@
     
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="10" Orientation="Vertical" VerticalAlignment="Top">
-
+            
+            <Button x:Name="bLang" 
+                    Width="50" 
+                    Content="{Binding LocVM.BLang}"
+                    HorizontalAlignment="Left" 
+                    Margin="0,0,0,10" 
+                    Click="ToggleLanguage_Click"></Button>
+            
             <!-- URL Input -->
-            <TextBlock Text="Video URL:" Margin="0,0,0,2" />
+            <TextBlock Text="{Binding LocVM.VideoUrl}" Margin="5,0,0,-2" />
             <DockPanel LastChildFill="True">
-                <Button Content="Paste" Width="75" DockPanel.Dock="Right" Click="PasteUrl_Click" />
+                <Button Content="{Binding LocVM.BPaste}" Width="75" DockPanel.Dock="Right" Click="PasteUrl_Click" />
                 <TextBox x:Name="UrlTextBox" Margin="0,0,5,0" />
             </DockPanel>
 
             <!-- Local Save Path -->
-            <TextBlock Text="Local Save Path:" Margin="0,10,0,2" />
+            <TextBlock Text="{Binding LocVM.LocalSavePath}" Margin="5,10,0,-2" />
             <DockPanel LastChildFill="True">
-                <Button Content="Browse" Width="75" DockPanel.Dock="Right" Click="BrowseLocalPath_Click" />
+                <Button Content="{Binding LocVM.BBrowse}" Width="75" DockPanel.Dock="Right" Click="BrowseLocalPath_Click" />
                 <TextBox x:Name="LocalPathTextBox" Margin="0,0,5,0"
-                         Text="{Binding LocalSavePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                         Text="{Binding Settings.LocalSavePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </DockPanel>
 
             <!-- yt-dlp Install Location -->
-            <TextBlock Text="yt-dlp Install Path:" Margin="0,10,0,2" />
+            <TextBlock Text="{Binding LocVM.YtDlpInstallPath}" Margin="5,10,0,-2" />
             <DockPanel LastChildFill="True">
-                <Button Content="Browse" Width="75" DockPanel.Dock="Right" Click="BrowseYTDLPPath_Click" />
+                <Button Content="{Binding LocVM.BBrowse}" Width="75" DockPanel.Dock="Right" Click="BrowseYTDLPPath_Click" />
                 <TextBox x:Name="YtDlpPathTextBox" Margin="0,0,5,0"
-                         Text="{Binding YtDlpPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                         Text="{Binding Settings.YtDlpPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </DockPanel>
 
             <!-- yt-dlp Arguments -->
-            <TextBlock Text="yt-dlp Arguments:" Margin="0,10,0,2" />
+            <TextBlock Text="{Binding LocVM.YtDlpArgs}" Margin="5,10,0,2" />
             <TextBox x:Name="YtDlpArgsTextBox"  Height="80" TextWrapping="Wrap" AcceptsReturn="True"
                      VerticalContentAlignment="Top"
                      Padding="2,2"
-                     Text="{Binding YtDlpArguments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding Settings.YtDlpArguments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
             <!-- yt-dlp Naming Scheme -->
-            <TextBlock Text="yt-dlp Naming scheme:" Margin="0,10,0,2" />
+            <TextBlock Text="{Binding LocVM.YtDlpNaming}" Margin="5,10,0,2" />
             <TextBox x:Name="YtDlpNamingTextBox" TextWrapping="Wrap" AcceptsReturn="True"
                      VerticalContentAlignment="Top"
                      Padding="2,2"
-                     Text="{Binding YtDlpNamingScheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding Settings.YtDlpNamingScheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
             
             <!-- Post Install Checkbox -->
-            <CheckBox x:Name="EnablePostInstallCheckBox" Content="Enable Post-Download Actions" Margin="0,20,0,0"
+            <CheckBox x:Name="EnablePostInstallCheckBox" Content="{Binding LocVM.PostEnablePostActions}" Margin="0,20,0,0"
                       Foreground="{StaticResource FontColor}"
-                      IsChecked="{Binding EnablePostInstall, Mode=TwoWay}" />
+                      IsChecked="{Binding Settings.EnablePostInstall, Mode=TwoWay}" />
 
-            <CheckBox x:Name="RemoteTransferCheckBox" Content="Transfer to Remote after download" Margin="15,10,0,0"
+            <CheckBox x:Name="RemoteTransferCheckBox" Content="{Binding LocVM.PostTransToRemote}" Margin="15,10,0,0"
                       Foreground="{StaticResource FontColor}"
                       IsEnabled="{Binding IsChecked, ElementName=EnablePostInstallCheckBox}"
-                      IsChecked="{Binding RunRemoteTransfer, Mode=TwoWay}" />
+                      IsChecked="{Binding Settings.RunRemoteTransfer, Mode=TwoWay}" />
 
-            <CheckBox x:Name="RemoteScriptRunning" Content="Run Remote script after download" Margin="15,10,0,0"
+            <CheckBox x:Name="RemoteScriptRunning" Content="{Binding LocVM.PostRunRemoteScript}" Margin="15,10,0,0"
                       Foreground="{StaticResource FontColor}"
                       IsEnabled="{Binding IsChecked, ElementName=EnablePostInstallCheckBox}"
-                      IsChecked="{Binding RunRemoteScript, Mode=TwoWay}" />
+                      IsChecked="{Binding Settings.RunRemoteScript, Mode=TwoWay}" />
 
             <!-- Remote Server Configuration -->
             <!--<Expander Margin="0,20,0,5" IsExpanded="True" Foreground="{StaticResource FontColor}">-->
             <Expander Margin="0,20,0,5" IsExpanded="{Binding RemoteBlockOpen, Mode=TwoWay}" Foreground="{StaticResource FontColor}">
                 <Expander.Header>
-                    <TextBlock Text="Remote Server Configuration" FontWeight="Bold" />
+                    <TextBlock Text="{Binding LocVM.RemoteServerConfTitle}" FontWeight="Bold" />
                 </Expander.Header>
     
                 <Grid Margin="0,5,0,0">
@@ -94,32 +101,32 @@
                     </Grid.RowDefinitions>
 
                     <!-- Column 1 -->
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Host:" Margin="0,0,0,2"/>
-                    <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding RemoteHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding LocVM.RHost}" Margin="5,0,0,2"/>
+                    <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding Settings.RemoteHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Username:" Margin="0,8,0,2"/>
-                    <TextBox Grid.Row="3" Grid.Column="0" Text="{Binding RemoteUsername, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding LocVM.RUser}" Margin="5,8,0,2"/>
+                    <TextBox Grid.Row="3" Grid.Column="0" Text="{Binding Settings.RemoteUsername, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Password:" Margin="0,8,0,2"/>
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{Binding LocVM.RPassword}" Margin="5,8,0,2"/>
                     <PasswordBox Grid.Row="5" Grid.Column="0" x:Name="RemotePasswordBox" PasswordChanged="RemotePasswordBox_PasswordChanged" />
 
                     <!-- Column 2 -->
-                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Remote Location:" Margin="0,0,0,2"/>
-                    <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding RemoteLocation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding LocVM.RRemotePath}" Margin="5,0,0,2"/>
+                    <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Settings.RemoteLocation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="Post-Transfer Script Path:" Margin="0,8,0,2"/>
-                    <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding PostTransferScriptPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding LocVM.RRemoteScriptPath}" Margin="5,8,0,2"/>
+                    <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding Settings.PostTransferScriptPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     
-                    <TextBlock Grid.Row="4" Grid.Column="2" Text="Remote OS:" Margin="0,8,0,2"/>
+                    <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding LocVM.ROs}" Margin="5,8,0,2"/>
                     <ComboBox x:Name="SelectedOS" Grid.Row="5" Grid.Column="2"
-                              ItemsSource="{Binding AvailableOSList}"
-                              SelectedItem="{Binding SelectedRemoteOS, Mode=TwoWay}"
+                              ItemsSource="{Binding Settings.AvailableOSList}"
+                              SelectedItem="{Binding Settings.SelectedRemoteOS, Mode=TwoWay}"
                               Margin="0,0,0,0" />
                 </Grid>
             </Expander>
 
             <!-- Buttons -->
-            <Button x:Name="DownloadBtn" Content="Download" Margin="0,20,0,0" Width="380" Height="35" Click="DownloadButton_Click" />
+            <Button x:Name="DownloadBtn" Content="{Binding LocVM.BDownload}" Margin="0,20,0,0" Width="380" Height="35" Click="DownloadButton_Click" />
 
             <TextBox x:Name="OutputTextBox"
                      Margin="10"

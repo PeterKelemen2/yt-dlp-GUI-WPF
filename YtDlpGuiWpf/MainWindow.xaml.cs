@@ -14,14 +14,14 @@ namespace YtDlpGuiWpf;
 
 public partial class MainWindow : Window
 {
-    private YtdlpSettings _settings = new();
-    public List<string> AvailableOSList { get; } = new() { "Linux", "Windows" };
+    public YtdlpSettings Settings { get; set; } = new();
+    public LocalizationViewModel LocVM { get; } = new();
     bool isDownloading = false;
 
     public MainWindow()
     {
         InitializeComponent();
-        DataContext = _settings;
+        DataContext = this;
     }
 
     private void PasteUrl_Click(object sender, RoutedEventArgs e)
@@ -32,18 +32,18 @@ public partial class MainWindow : Window
     private async void DownloadButton_Click(object sender, RoutedEventArgs e)
     {
         string url = UrlTextBox.Text;
-        string savePath = _settings.LocalSavePath;
-        string ytDlpPath = _settings.YtDlpPath;
-        string ytDlpArgs = _settings.YtDlpArguments;
-        string ytDlpNaming = _settings.YtDlpNamingScheme;
-        bool postInstall = _settings.EnablePostInstall;
-        bool remoteTransfer = _settings.RunRemoteTransfer;
-        bool remoteScript = _settings.RunRemoteScript;
-        string remoteScriptPath = _settings.PostTransferScriptPath;
-        string remoteHost = _settings.RemoteHost;
-        string remoteUser = _settings.RemoteUsername;
+        string savePath = Settings.LocalSavePath;
+        string ytDlpPath = Settings.YtDlpPath;
+        string ytDlpArgs = Settings.YtDlpArguments;
+        string ytDlpNaming = Settings.YtDlpNamingScheme;
+        bool postInstall = Settings.EnablePostInstall;
+        bool remoteTransfer = Settings.RunRemoteTransfer;
+        bool remoteScript = Settings.RunRemoteScript;
+        string remoteScriptPath = Settings.PostTransferScriptPath;
+        string remoteHost = Settings.RemoteHost;
+        string remoteUser = Settings.RemoteUsername;
         string remotePass = RemotePasswordBox.Password;
-        string remoteLoc = _settings.RemoteLocation;
+        string remoteLoc = Settings.RemoteLocation;
 
         if (string.IsNullOrWhiteSpace(url) || string.IsNullOrWhiteSpace(savePath) ||
             string.IsNullOrWhiteSpace(ytDlpPath))
@@ -283,7 +283,7 @@ public partial class MainWindow : Window
                 var json = File.ReadAllText(Common.ConfigPath);
                 var loaded = JsonSerializer.Deserialize<YtdlpSettings>(json);
                 if (loaded != null)
-                    _settings = loaded;
+                    Settings = loaded;
             }
             catch (Exception ex)
             {
@@ -291,19 +291,33 @@ public partial class MainWindow : Window
             }
         }
 
-        DataContext = _settings;
-        RemotePasswordBox.Password = _settings.RemotePassword;
+        // DataContext = Settings;
+        RemotePasswordBox.Password = Settings.RemotePassword;
+        
+        Loc.SetCulture(Settings.Culture);
     }
 
     private void MainWindow_Closing(object sender, CancelEventArgs e)
     {
-        _settings.RemotePassword = RemotePasswordBox.Password;
-        var json = JsonSerializer.Serialize(_settings, new JsonSerializerOptions { WriteIndented = true });
+        Settings.RemotePassword = RemotePasswordBox.Password;
+        var json = JsonSerializer.Serialize(Settings, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(Common.ConfigPath, json);
     }
 
     private void RemotePasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
     {
-        _settings.RemotePassword = RemotePasswordBox.Password;
+        Settings.RemotePassword = RemotePasswordBox.Password;
+    }
+
+    private void ToggleLanguage_Click(object sender, RoutedEventArgs e)
+    {
+        var current = Loc.GetCurrentCulture().Name;
+        var newCulture = current.StartsWith("hu") ? "en" : "hu"; 
+        
+        Settings.Culture = newCulture;
+        Loc.SetCulture(newCulture);
+
+        // Tell the ViewModel to notify UI to update localized strings
+        LocVM.RaiseAllPropertiesChanged();
     }
 }
